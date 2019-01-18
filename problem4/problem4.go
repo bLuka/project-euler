@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math"
+	"sync"
 )
 
 func isPalindrome(n uint) bool {
@@ -27,23 +28,36 @@ func isPalindrome(n uint) bool {
 	return false
 }
 
-func compute() (matchX, matchY uint) {
-	var match uint = 100 * 100
-	matchX, matchY = 100, 100
-	var x, y uint = 999, 999
+func compute() (match uint) {
+	match = 100 * 100
+	const y uint = 999
+	var x uint = y
+	var matchX uint = 100
 
-	for ; x >= 100 && x*y > match; x-- {
-		for i := uint(0); (y-i) > x && x*(y-i) > match; i++ {
-			if isPalindrome(x * (y - i)) {
-				matchX, matchY = x, y-i
-				match = matchX * matchY
+	var wg sync.WaitGroup
+	for ; x >= matchX; x-- {
+		wg.Add(1)
+		go (func(x uint) {
+			defer wg.Done()
+			for i := uint(0); ; i++ {
+				yMinusI := y - i
+				num := x * yMinusI
+				if !(yMinusI > x && num > match) {
+					break
+				}
+
+				if isPalindrome(num) {
+					match = num
+					matchX = x
+				}
 			}
-		}
+		})(x)
 	}
+	wg.Wait()
 	return
 }
 
 func main() {
-	x, y := compute()
-	fmt.Printf("%d×%d = %d\n", x, y, x*y)
+	match := compute()
+	fmt.Printf("%d\n", match)
 }
