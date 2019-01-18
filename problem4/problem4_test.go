@@ -62,6 +62,12 @@ func TestIsPalindrome(t *testing.T) {
 	}
 }
 
+func TestCompute(t *testing.T) {
+	if compute() != 906609 {
+		t.Fatal("compute() returned", compute())
+	}
+}
+
 func BenchmarkCompute(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		compute()
