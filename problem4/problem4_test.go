@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-var testingMap = map[int]bool{
+var testingMap = map[uint]bool{
 	1: true,
 	5: true,
 
@@ -49,7 +49,7 @@ var testingMap = map[int]bool{
 }
 
 func TestIsPalindrome(t *testing.T) {
-	test := func(n int, expected bool) func(*testing.T) {
+	test := func(n uint, expected bool) func(*testing.T) {
 		return func(t *testing.T) {
 			if isPalindrome(n) != expected {
 				t.Fail()
@@ -62,8 +62,34 @@ func TestIsPalindrome(t *testing.T) {
 	}
 }
 
+func BenchmarkCompute(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		compute()
+	}
+}
+
+func BenchmarkLog10(b *testing.B) {
+	bench := func(n uint) func(*testing.B) {
+		return func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				math.Log10(float64(n))
+			}
+		}
+	}
+
+	keys := make([]uint, 0, len(testingMap))
+	for k := range testingMap {
+		keys = append(keys, k)
+	}
+	sort.Slice(keys, func(i, j int) bool { return keys[i] < keys[j] })
+
+	for _, n := range keys {
+		b.Run(fmt.Sprintf("N=%d", n), bench(n))
+	}
+}
+
 func BenchmarkIsPalindrome(b *testing.B) {
-	bench := func(n int) func(*testing.B) {
+	bench := func(n uint) func(*testing.B) {
 		return func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
 				isPalindrome(n)
@@ -71,8 +97,8 @@ func BenchmarkIsPalindrome(b *testing.B) {
 		}
 	}
 
-	validKeys := make([]int, 0, len(testingMap))
-	invalidKeys := make([]int, 0, len(testingMap))
+	validKeys := make([]uint, 0, len(testingMap))
+	invalidKeys := make([]uint, 0, len(testingMap))
 	for k, expected := range testingMap {
 		if expected {
 			validKeys = append(validKeys, k)
@@ -80,13 +106,13 @@ func BenchmarkIsPalindrome(b *testing.B) {
 			invalidKeys = append(invalidKeys, k)
 		}
 	}
-	sort.Ints(validKeys)
-	sort.Ints(invalidKeys)
+	sort.Slice(validKeys, func(i, j int) bool { return validKeys[i] < validKeys[j] })
+	sort.Slice(invalidKeys, func(i, j int) bool { return invalidKeys[i] < invalidKeys[j] })
 
 	for _, n := range validKeys {
-		b.Run(fmt.Sprintf("%t/log10N=%d/N=%d", testingMap[n], int(math.Log10(float64(n))), n), bench(n))
+		b.Run(fmt.Sprintf("%t/log10N=%d/N=%d", testingMap[n], uint(math.Log10(float64(n))), n), bench(n))
 	}
 	for _, n := range invalidKeys {
-		b.Run(fmt.Sprintf("%t/log10N=%d/N=%d", testingMap[n], int(math.Log10(float64(n))), n), bench(n))
+		b.Run(fmt.Sprintf("%t/log10N=%d/N=%d", testingMap[n], uint(math.Log10(float64(n))), n), bench(n))
 	}
 }

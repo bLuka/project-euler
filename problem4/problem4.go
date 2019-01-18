@@ -1,11 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"math"
 )
 
-func isPalindrome(n int) bool {
-	switch int(math.Log10(float64(n))) {
+func isPalindrome(n uint) bool {
+	switch uint(math.Log10(float64(n))) {
 	case 0:
 		return true
 	case 1:
@@ -26,9 +27,23 @@ func isPalindrome(n int) bool {
 	return false
 }
 
-func compute() {
+func compute() (matchX, matchY uint) {
+	var match uint = 100 * 100
+	matchX, matchY = 100, 100
+	var x, y uint = 999, 999
+
+	for ; x >= 100 && x*y > match; x-- {
+		for i := uint(0); (y-i) > x && x*(y-i) > match; i++ {
+			if isPalindrome(x * (y - i)) {
+				matchX, matchY = x, y-i
+				match = matchX * matchY
+			}
+		}
+	}
+	return
 }
 
 func main() {
-	compute()
+	x, y := compute()
+	fmt.Printf("%d×%d = %d\n", x, y, x*y)
 }
