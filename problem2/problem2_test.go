@@ -3,7 +3,7 @@ package main
 import "testing"
 
 func BenchmarkFibonacciInverse(b *testing.B) {
-	test := func(n int) func(*testing.B) {
+	test := func(n uint) func(*testing.B) {
 		return func(b *testing.B) {
 			f := fibonacci(n)
 			b.ResetTimer()
@@ -22,7 +22,7 @@ func BenchmarkFibonacciInverse(b *testing.B) {
 }
 
 func BenchmarkFibonacci(b *testing.B) {
-	test := func(n int) func(*testing.B) {
+	test := func(n uint) func(*testing.B) {
 		return func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
 				fibonacci(n)
