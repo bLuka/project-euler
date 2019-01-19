@@ -3,7 +3,7 @@ package main
 import "testing"
 
 func BenchmarkCompute(b *testing.B) {
-	test := func(N int) func(*testing.B) {
+	test := func(N uint) func(*testing.B) {
 		return func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
 				compute(N)
