@@ -20,16 +20,18 @@ func fibonacci(n uint) uint {
 	return uint(math.Round(float64(((math.Pow(PHI, float64(n)) - math.Pow(1-PHI, float64(n))) / SQRT5))))
 }
 
-func sum() (sum uint) {
+func sum() uint {
+	sum := uint(1)
+
 	max := fibonacciInverse(4000000)
-	for i := uint(1); i <= max; i++ {
+	for i := uint(0); i <= max; i++ {
 		if (i-2)%3 == 0 {
 			continue
 		}
 
 		sum += fibonacci(i)
 	}
-	return
+	return sum
 }
 
 func main() {
