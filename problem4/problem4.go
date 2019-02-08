@@ -5,11 +5,7 @@ import (
 )
 
 func is6Digits(n uint) bool {
-	if n >= 100000 {
-		return true
-	} else {
-		return false
-	}
+	return n >= 100000
 }
 
 func isPalindrome(n uint) bool {
